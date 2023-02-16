@@ -4,7 +4,7 @@ set -euo pipefail
 
 GH_REPO="https://github.com/oracle/oci-cli"
 TOOL_NAME="oci"
-TOOL_TEST="oci --help"
+TOOL_TEST="oci"
 
 fail() {
   echo -e "asdf-$TOOL_NAME: $*"
@@ -38,7 +38,7 @@ download_release() {
   version="$1"
   filename="$2"
 
-  url="$GH_REPO/releases/download/v${version}/oci-cli-${version}.zip"
+  url="https://raw.githubusercontent.com/oracle/oci-cli/v${version}/scripts/install/install.sh"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -55,13 +55,20 @@ install_version() {
 
   (
     mkdir -p "$install_path"
-    cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+    bash "$ASDF_DOWNLOAD_PATH"/install.sh \
+      --accept-all-defaults \
+      --install-dir "$ASDF_INSTALL_PATH"/lib \
+      --exec-dir "$install_path" \
+      --script-dir "$install_path"/oci-cli-scripts \
+      --rc-file-path ~/.bashrc.oci \
+      --oci-cli-version "$version"
 
     local tool_cmd
     tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
     test -x "$install_path/$tool_cmd" || fail "Expected $install_path/$tool_cmd to be executable."
-    $TOOL_TEST &>/dev/null || fail "$TOOL_TEST failed to execute"
+    "$install_path/$TOOL_TEST" -v || fail "$TOOL_TEST failed to execute"
 
+    rm "$ASDF_DOWNLOAD_PATH"/install.sh
     echo "$TOOL_NAME $version installation was successful!"
   ) || (
     rm -rf "$install_path"
