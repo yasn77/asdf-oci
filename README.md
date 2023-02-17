@@ -45,6 +45,10 @@ asdf global oci latest
 oci --help
 ```
 
+# Auto completion
+
+You can source/use contents of `~/.bashrc.oci` to set up auto completion
+
 Check [asdf](https://github.com/asdf-vm/asdf) readme for more instructions on how to
 install & manage versions.
 
