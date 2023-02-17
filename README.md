@@ -17,6 +17,7 @@
 # Dependencies
 
 - `bash`, `curl`, `tar`, `zip`: generic POSIX utilities.
+- `python` : Python v3, used by Oracle CLI install script
 
 # Install
 
